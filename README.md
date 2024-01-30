@@ -32,11 +32,6 @@ The parameters are explained as follows:
 - `--username`: The Confluence username for authentication. Can be provided as an environment variable CONFLUENCE_USERNAME instead.
 - `--password`: The Confluence password for authentication. Can be provided as an environment variable CONFLUENCE_PASSWORD instead.
 
-## Build the docker image
-
-```shell
-docker build -t confluence-updater .
-```
 
 ## Run Container
 
@@ -44,5 +39,10 @@ docker build -t confluence-updater .
 docker run -e CONFLUENCE_URL=your_url \
   -e CONFLUENCE_USERNAME=your_username \
   -e CONFLUENCE_PASSWORD=your_password \
-  confluence-updater
+  ghcr.io/tcl-plus/publish-release-note:latest \
+  --page-id PAGE_ID \
+  --title TITLE \
+  --service-name SERVICE_NAME \
+  --image-tag IMAGE_TAG \
+  --build-url BUILD_URL \
 ```
