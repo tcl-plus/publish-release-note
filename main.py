@@ -1,23 +1,27 @@
 import argparse
+import json
 import os
 from atlassian import Confluence
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 def get_release_message(service_name, image_tag, build_url):
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    current_time = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S %Z")
     return f'<h4>{current_time}&nbsp;&nbsp;&nbsp;&nbsp;{service_name}&nbsp;&nbsp;&nbsp;&nbsp;{image_tag}&nbsp;&nbsp;&nbsp;&nbsp;<a href="{build_url}">详情</a></h4>'
 
 
 def add_release_info(page_id, title, service_name, image_tag, build_url, conf_url, conf_username, conf_password):
     confluence = Confluence(url=conf_url, username=conf_username, password=conf_password)
     prepend_body = get_release_message(service_name, image_tag, build_url)
-    confluence.prepend_page(page_id=page_id, title=title, prepend_body=prepend_body)
+    response = confluence.prepend_page(page_id=page_id, title=title, prepend_body=prepend_body)
+    page_url = response['_link']['base'] + response['_link']['webui']
+    print(f"Publish Release Note to: {page_url}")
 
 
 def main():
     # 创建解析器并设置参数
-    parser = argparse.ArgumentParser(description="Update a Confluence page with release information by prepending a message to the page")
+    parser = argparse.ArgumentParser(
+        description="Update a Confluence page with release information by prepending a message to the page")
     parser.add_argument("--page-id", help="Page ID to update", required=True)
     parser.add_argument("--title", help="Page title to update", required=True)
     parser.add_argument("--service-name", help="Service name for the release", required=True)
