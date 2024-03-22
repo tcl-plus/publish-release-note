@@ -14,7 +14,6 @@ def add_release_info(page_id, title, service_name, image_tag, build_url, conf_ur
     confluence = Confluence(url=conf_url, username=conf_username, password=conf_password)
     prepend_body = get_release_message(service_name, image_tag, build_url)
     response = confluence.prepend_page(page_id=page_id, title=title, prepend_body=prepend_body)
-    print(json.dumps(response, indent=4))
     page_url = response['_links']['base'] + response['_links']['webui']
     print(f"Publish Release Note to: {page_url}")
 
